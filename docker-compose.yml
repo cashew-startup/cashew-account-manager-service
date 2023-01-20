@@ -1,0 +1,24 @@
+version: '3'
+services:
+  mysql-standalone:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=cashewAuthDB
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+    ports:
+      - '3307:3306'
+
+  springboot-docker-container:
+    image: account-manager-1.0.jar
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/cashewAuthDB?autoReconnect=true&useSSL=false
+      restart: unless-stopped
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    depends_on:
+      - mysql-standalone
