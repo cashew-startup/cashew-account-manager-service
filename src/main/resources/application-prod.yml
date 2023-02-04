@@ -2,4 +2,4 @@ ACCESS_TOKEN_PRIVATE_KEY_PATH: "access-refresh-token-keys/access-token-private.k
 ACCESS_TOKEN_PUBLIC_KEY_PATH: "access-refresh-token-keys/access-token-public.key"
 REFRESH_TOKEN_PRIVATE_KEY_PATH: "access-refresh-token-keys/refresh-token-private.key"
 REFRESH_TOKEN_PUBLIC_KEY_PATH: "access-refresh-token-keys/refresh-token-public.key"
-DB_URL: "jdbc:mysql://localhost:3306/cashewAuthDB"
+DB_URL: "jdbc:mysql://194.35.116.155:3306/cashewAuthDB"
