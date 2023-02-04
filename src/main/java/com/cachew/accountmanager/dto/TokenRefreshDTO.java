@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterResponseDTO {
+public class TokenRefreshDTO {
 
-    private boolean isSignUp;
-    private String description;
-    private TokenDTO token;
+    private String userId;
+    private String refreshToken;
 
 }

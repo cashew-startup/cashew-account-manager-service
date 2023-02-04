@@ -64,7 +64,7 @@ public class MainUserService {
         return new LoginResponseDTO(true, loginDTO.getUsername(), tokenGenerator.createToken(authentication));
     }
 
-    public ResponseEntity<TokenDTO> refreshToken(TokenDTO tokenDTO) {
+    public ResponseEntity<TokenDTO> refreshToken(TokenRefreshDTO tokenDTO) {
         Authentication authentication = refreshTokenAuthProvider.authenticate(new BearerTokenAuthenticationToken(tokenDTO.getRefreshToken()));
         Jwt jwt = (Jwt) authentication.getCredentials();
         long id = Long.parseLong((String) jwt.getClaims().get("sub"));
