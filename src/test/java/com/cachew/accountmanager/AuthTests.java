@@ -19,8 +19,6 @@ public class AuthTests {
     @Autowired
     private AuthController authController;
 
-
-
     @Test
     public void registerTest() {
         SignupDTO signupDTO = new SignupDTO("user", "user");
