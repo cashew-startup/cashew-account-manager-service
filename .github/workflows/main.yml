@@ -1,0 +1,10 @@
+name: Build and Test
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: build cachew account manager service
+        run: mvn -Dtest=AuthTests test

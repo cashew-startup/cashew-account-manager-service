@@ -14,7 +14,7 @@ import static org.springframework.test.util.AssertionErrors.*;
 @Slf4j
 @SpringBootTest
 @Transactional
-public class AuthTest {
+public class AuthTests {
 
     @Autowired
     private AuthController authController;
