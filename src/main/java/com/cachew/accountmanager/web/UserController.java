@@ -5,6 +5,7 @@ import com.cachew.accountmanager.entity.User;
 import com.cachew.accountmanager.dto.UserDTO;
 import com.cachew.accountmanager.repository.UserRepository;
 import com.cachew.accountmanager.service.MainUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/users")
 public class UserController {
     @Autowired

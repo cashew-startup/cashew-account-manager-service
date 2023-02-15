@@ -27,11 +27,8 @@ public class AuthTests {
         RegisterResponseDTO dto = result.getBody();
 
         assertNotNull("dto is null", dto);
-        assertTrue("is not sign up", dto.isSignUp());
-        log.info("is sign up: {}", dto.isSignUp());
-        assertEquals("user {user} is not registered", "user {user} is registered", dto.getDescription());
-        log.info("description: {}", dto.getDescription());
-        assertNotNull("token is null", dto.getToken());
+        assertEquals("is not sign up", 200, dto.getException().getCode());
+        assertEquals("User is registered", "Ok", dto.getException().getDescription());
         log.info("token:\n{}", dto.getToken().toString());
     }
 
@@ -47,11 +44,7 @@ public class AuthTests {
 
         assertNotNull("dto is null", dto);
         assertEquals("username not user", "user", dto.getUsername());
-        log.info("username: {}", dto.getUsername());
-        assertNotNull("token is null", dto.getToken());
-        log.info("token:\n{}", dto.getToken().toString());
-        assertTrue("user isn't log", dto.isLogin());
-        log.info("is login: {}", dto.isLogin());
+        assertNotNull("token is not null", dto.getToken());
     }
 
     @Test
@@ -75,6 +68,20 @@ public class AuthTests {
 
         assertNotNull("refreshed token is null", token);
         log.info("token:\n{}", token.toString());
+    }
+
+    @Test
+    public void checkTokenTest() {
+        SignupDTO signupDTO = new SignupDTO("user", "user");
+        ResponseEntity<RegisterResponseDTO> register = authController.register(signupDTO);
+        TokenDTO token = register.getBody().getToken();
+
+        String refresh = token.getRefreshToken();
+        String access = token.getAccessToken();
+
+        log.info("refresh token: {}", refresh);
+        log.info("access token: {}", access);
+
     }
 
 }

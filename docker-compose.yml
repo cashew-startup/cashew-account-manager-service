@@ -11,7 +11,7 @@ services:
       - '3307:3306'
 
   springboot-docker-container:
-    image: account-manager-1.0.jar
+    image: meelesh/account-manager
     ports:
       - '8080:8080'
     environment:
