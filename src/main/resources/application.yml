@@ -6,7 +6,7 @@ refresh-token:
   public: ${REFRESH_TOKEN_PUBLIC_KEY_PATH}
 spring:
   profiles:
-    active: prod
+    active: dev
   datasource:
     driverClassName: com.mysql.jdbc.Driver
     url: ${DB_URL}
@@ -19,3 +19,6 @@ spring:
 logging:
   level:
     org.springframework.security: DEBUG
+
+server:
+  port: 8081

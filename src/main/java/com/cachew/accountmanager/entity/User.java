@@ -19,7 +19,7 @@ import static jakarta.persistence.GenerationType.AUTO;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Entity
-public class User implements UserDetails {
+public class User extends CustomUserDetails {
 
     @Id
     @GeneratedValue(strategy = AUTO)

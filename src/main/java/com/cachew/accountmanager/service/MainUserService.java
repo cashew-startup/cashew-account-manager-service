@@ -1,6 +1,7 @@
 package com.cachew.accountmanager.service;
 
 import com.cachew.accountmanager.dto.*;
+import com.cachew.accountmanager.entity.CustomUserDetails;
 import com.cachew.accountmanager.entity.User;
 import com.cachew.accountmanager.repository.UserRepository;
 import com.cachew.accountmanager.security.TokenGenerator;
@@ -45,13 +46,19 @@ public class MainUserService {
 
     public RegisterResponseDTO createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            return new RegisterResponseDTO(false, "User with same username already exists", null);
+            ExceptionDTO exception = new ExceptionDTO();
+            exception.setCode(409);
+            exception.setDescription("User already exists");
+            return new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), null, exception);
         }
 
         userDetailsManager.createUser(user);
         Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(user, user.getPassword(), Collections.EMPTY_LIST);
 
-        return new RegisterResponseDTO(true, "user {" + user.getUsername() + "} is registered", tokenGenerator.createToken(authentication));
+        ExceptionDTO exception = new ExceptionDTO();
+        exception.setCode(200);
+        exception.setDescription("Ok");
+        return new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), tokenGenerator.createToken(authentication), exception);
     }
 
     public LoginResponseDTO loginUser(LoginDTO loginDTO) {
@@ -59,9 +66,14 @@ public class MainUserService {
         try {
             authentication = daoAuthenticationProvider.authenticate(UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getUsername(), loginDTO.getPassword()));
         } catch (Exception e) {
-            return new LoginResponseDTO(false, loginDTO.getUsername(), null);
+            ExceptionDTO exception = new ExceptionDTO();
+            exception.setDescription("403");
+            exception.setDescription("Unauthorized");
+            return new LoginResponseDTO(null, loginDTO.getUsername(), null, exception);
         }
-        return new LoginResponseDTO(true, loginDTO.getUsername(), tokenGenerator.createToken(authentication));
+
+        CustomUserDetails details = (CustomUserDetails) authentication.getPrincipal();
+        return new LoginResponseDTO(String.valueOf(details.getId()), details.getUsername(), tokenGenerator.createToken(authentication), null);
     }
 
     public ResponseEntity<TokenDTO> refreshToken(TokenRefreshDTO tokenDTO) {
@@ -70,7 +82,7 @@ public class MainUserService {
         long id = Long.parseLong((String) jwt.getClaims().get("sub"));
         if (userRepository.existsById(Long.parseLong(tokenDTO.getUserId())) && tokenDTO.getUserId().equals(Long.toString(id)))
             return ResponseEntity.ok(tokenGenerator.createToken(authentication));
-        return new ResponseEntity<>(new TokenDTO(null, null, null), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new TokenDTO(tokenDTO.getUserId(), null, null, tokenDTO.getRefreshToken()), HttpStatus.NOT_FOUND);
     }
 
     @Transactional

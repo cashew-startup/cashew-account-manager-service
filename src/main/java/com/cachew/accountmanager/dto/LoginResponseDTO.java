@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginResponseDTO {
 
-    private boolean isLogin;
+    private String id;
     private String username;
     private TokenDTO token;
+    private ExceptionDTO exception;
 
 }
