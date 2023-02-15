@@ -13,7 +13,7 @@ services:
   springboot-docker-container:
     image: meelesh/account-manager
     ports:
-      - '8080:8080'
+      - '8081:8081'
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/cashewAuthDB?autoReconnect=true&useSSL=false
       restart: unless-stopped
