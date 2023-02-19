@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExceptionDTO {
+public class StatusDTO {
 
     private int code;
     private String description;

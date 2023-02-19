@@ -12,6 +12,6 @@ public class LoginResponseDTO {
     private String id;
     private String username;
     private TokenDTO token;
-    private ExceptionDTO exception;
+    private StatusDTO status;
 
 }

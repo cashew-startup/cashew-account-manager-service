@@ -46,34 +46,34 @@ public class MainUserService {
 
     public RegisterResponseDTO createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            ExceptionDTO exception = new ExceptionDTO();
-            exception.setCode(409);
-            exception.setDescription("User already exists");
-            return new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), null, exception);
+            StatusDTO status = new StatusDTO();
+            status.setCode(409);
+            status.setDescription("User already exists");
+            return new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), null, status);
         }
 
         userDetailsManager.createUser(user);
         Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(user, user.getPassword(), Collections.EMPTY_LIST);
 
-        ExceptionDTO exception = new ExceptionDTO();
-        exception.setCode(200);
-        exception.setDescription("Ok");
-        return new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), tokenGenerator.createToken(authentication), exception);
+        StatusDTO status = new StatusDTO();
+        status.setCode(200);
+        status.setDescription("Ok");
+        return new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), tokenGenerator.createToken(authentication), status);
     }
 
-    public LoginResponseDTO loginUser(LoginDTO loginDTO) {
+    public ResponseEntity<LoginResponseDTO> loginUser(LoginDTO loginDTO) {
         Authentication authentication = null;
         try {
             authentication = daoAuthenticationProvider.authenticate(UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getUsername(), loginDTO.getPassword()));
         } catch (Exception e) {
-            ExceptionDTO exception = new ExceptionDTO();
-            exception.setDescription("403");
-            exception.setDescription("Unauthorized");
-            return new LoginResponseDTO(null, loginDTO.getUsername(), null, exception);
+            StatusDTO status = new StatusDTO();
+            status.setDescription("403");
+            status.setDescription("Unauthorized");
+            return new ResponseEntity<>(new LoginResponseDTO(null, loginDTO.getUsername(), new TokenDTO(), status), HttpStatus.UNAUTHORIZED);
         }
 
         CustomUserDetails details = (CustomUserDetails) authentication.getPrincipal();
-        return new LoginResponseDTO(String.valueOf(details.getId()), details.getUsername(), tokenGenerator.createToken(authentication), null);
+        return new ResponseEntity<>(new LoginResponseDTO(String.valueOf(details.getId()), details.getUsername(), tokenGenerator.createToken(authentication), null), HttpStatus.OK);
     }
 
     public ResponseEntity<TokenDTO> refreshToken(TokenRefreshDTO tokenDTO) {
