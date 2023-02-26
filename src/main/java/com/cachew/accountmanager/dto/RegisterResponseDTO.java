@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterResponseDTO {
+public class RegisterResponseDTO extends DTO {
 
     private String id;
     private String username;
     private TokenDTO token;
-    private StatusDTO status;
 
 }

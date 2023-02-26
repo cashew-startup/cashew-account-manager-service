@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,24 +22,24 @@ public class AuthController {
         this.mainUserService = mainUserService;
     }
 
-
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponseDTO> register(@RequestBody SignupDTO signupDTO) {
-
-        User user = new User(signupDTO.getUsername(), signupDTO.getPassword());
-
-        RegisterResponseDTO response = mainUserService.createUser(user);
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+        User user = new User(registerRequestDTO.getUsername(), registerRequestDTO.getPassword());
+        return mainUserService.createUser(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
-        return mainUserService.loginUser(loginDTO);
+    public ResponseEntity<String> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        return mainUserService.loginUser(loginRequestDTO);
+    }
+
+    @GetMapping("/delete/{password}")
+    public ResponseEntity<String> delete(@AuthenticationPrincipal User user, String password) {
+        return mainUserService.deleteUser(user, password);
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<TokenDTO> token(@RequestBody TokenRefreshDTO tokenDTO) {
+    public ResponseEntity<String> token(@RequestBody TokenRefreshDTO tokenDTO) {
         return mainUserService.refreshToken(tokenDTO);
     }
 

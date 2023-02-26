@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class TokenDTO {
+public class TokenDTO extends DTO {
 
     private String userId;
     private String username;

@@ -2,6 +2,8 @@ package com.cachew.accountmanager;
 
 import com.cachew.accountmanager.dto.*;
 import com.cachew.accountmanager.web.AuthController;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,15 @@ public class AuthTests {
     @Autowired
     private AuthController authController;
 
-    @Test
-    public void registerTest() {
-        SignupDTO signupDTO = new SignupDTO("user", "user");
-        ResponseEntity<RegisterResponseDTO> result = authController.register(signupDTO);
+    @Autowired
+    private ObjectMapper mapper;
 
-        RegisterResponseDTO dto = result.getBody();
+    @Test
+    public void registerTest() throws JsonProcessingException {
+        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
+        ResponseEntity<String> result = authController.register(registerRequestDTO);
+
+        RegisterResponseDTO dto = mapper.readValue(result.getBody(), RegisterResponseDTO.class);
 
         assertNotNull("dto is null", dto);
 //        assertEquals("is not sign up", 200, dto.getException().getCode());
@@ -33,14 +38,14 @@ public class AuthTests {
     }
 
     @Test
-    public void loginTest() {
-        SignupDTO signupDTO = new SignupDTO("user", "user");
-        authController.register(signupDTO);
+    public void loginTest() throws JsonProcessingException {
+        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
+        authController.register(registerRequestDTO);
 
-        LoginDTO loginDTO = new LoginDTO("user", "user");
-        ResponseEntity<LoginResponseDTO> result = authController.login(loginDTO);
+        LoginRequestDTO loginDTO = new LoginRequestDTO("user", "user");
+        ResponseEntity<String> result = authController.login(loginDTO);
 
-        LoginResponseDTO dto = result.getBody();
+        LoginResponseDTO dto = mapper.readValue(result.getBody(), LoginResponseDTO.class);
 
         assertNotNull("dto is null", dto);
         assertEquals("username not user", "user", dto.getUsername());
@@ -48,23 +53,23 @@ public class AuthTests {
     }
 
     @Test
-    public void refreshTest() {
-        SignupDTO signupDTO = new SignupDTO("user", "user");
-        authController.register(signupDTO);
+    public void refreshTest() throws JsonProcessingException {
+        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
+        authController.register(registerRequestDTO);
 
-        LoginDTO loginDTO = new LoginDTO("user", "user");
-        ResponseEntity<LoginResponseDTO> result = authController.login(loginDTO);
-        TokenDTO tokenDTO = result.getBody().getToken();
+        LoginRequestDTO loginDTO = new LoginRequestDTO("user", "user");
+        ResponseEntity<String> result = authController.login(loginDTO);
+        LoginResponseDTO loginResponseDTO = mapper.readValue(result.getBody(), LoginResponseDTO.class);
 
-        String refreshToken = tokenDTO.getRefreshToken();
-        String id = tokenDTO.getUserId();
+        String refreshToken = loginResponseDTO.getToken().getRefreshToken();
+        String id = loginResponseDTO.getId();
 
         TokenRefreshDTO tokenRefreshDTO = new TokenRefreshDTO(id, refreshToken);
 
-        TokenDTO token = authController.token(tokenRefreshDTO).getBody();
+        String token = authController.token(tokenRefreshDTO).getBody();
 
-        assertNotNull("refresh token is null" , tokenDTO.getRefreshToken());
-        assertNotNull("userId is null", tokenDTO.getUserId());
+        assertNotNull("refresh token is null" , loginResponseDTO.getToken().getRefreshToken());
+        assertNotNull("userId is null", loginResponseDTO.getToken().getUserId());
 
         assertNotNull("refreshed token is null", token);
         log.info("token:\n{}", token.toString());
@@ -72,16 +77,20 @@ public class AuthTests {
 
     @Test
     public void checkTokenTest() {
-        SignupDTO signupDTO = new SignupDTO("user", "user");
-        ResponseEntity<RegisterResponseDTO> register = authController.register(signupDTO);
-        TokenDTO token = register.getBody().getToken();
+        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
+        ResponseEntity<String> register = authController.register(registerRequestDTO);
+        String token = register.getBody();
 
-        String refresh = token.getRefreshToken();
-        String access = token.getAccessToken();
+        log.info(token);
 
-        log.info("refresh token: {}", refresh);
-        log.info("access token: {}", access);
+        log.info("token: {}", token);
 
+    }
+
+    @Test
+    public void mapperDTO() {
+        StatusDTO status = new StatusDTO(100, "description");
+        assertEquals("", "{\n  \"code\" : 100,\n  \"description\" : \"description\"\n}", status.toJson());
     }
 
 }
