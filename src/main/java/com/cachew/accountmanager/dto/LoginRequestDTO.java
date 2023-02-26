@@ -3,9 +3,9 @@ package com.cachew.accountmanager.dto;
 import lombok.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class SignupDTO {
+@AllArgsConstructor
+public class LoginRequestDTO extends DTO {
 
     private String username;
     private String password;

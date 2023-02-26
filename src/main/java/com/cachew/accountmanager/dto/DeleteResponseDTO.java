@@ -5,9 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class DeleteUserDTO {
+@AllArgsConstructor
+public class DeleteResponseDTO extends DTO {
 
     private boolean isDeleted;
 

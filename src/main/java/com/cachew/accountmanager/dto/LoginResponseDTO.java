@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponseDTO {
+public class LoginResponseDTO extends DTO {
 
     private String id;
     private String username;
     private TokenDTO token;
-    private ExceptionDTO exception;
 
 }

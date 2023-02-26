@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class MainUserService {
@@ -33,65 +35,70 @@ public class MainUserService {
 
     private UserRepository userRepository;
 
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     public MainUserService(UserManager userManager,
                            TokenGenerator tokenGenerator,
                            DaoAuthenticationProvider daoAuthenticationProvider,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userDetailsManager = userManager;
         this.tokenGenerator = tokenGenerator;
         this.daoAuthenticationProvider = daoAuthenticationProvider;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public RegisterResponseDTO createUser(User user) {
+    public ResponseEntity<String> createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            ExceptionDTO exception = new ExceptionDTO();
-            exception.setCode(409);
-            exception.setDescription("User already exists");
-            return new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), null, exception);
+            StatusDTO status = new StatusDTO();
+            status.setCode(409);
+            status.setDescription("User already exists");
+            return new ResponseEntity<>(status.toJson(), HttpStatus.CONFLICT);
         }
 
         userDetailsManager.createUser(user);
         Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(user, user.getPassword(), Collections.EMPTY_LIST);
 
-        ExceptionDTO exception = new ExceptionDTO();
-        exception.setCode(200);
-        exception.setDescription("Ok");
-        return new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), tokenGenerator.createToken(authentication), exception);
+        RegisterResponseDTO response = new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), tokenGenerator.createToken(authentication));
+
+        return new ResponseEntity<>(response.toJson(), HttpStatus.OK);
     }
 
-    public LoginResponseDTO loginUser(LoginDTO loginDTO) {
-        Authentication authentication = null;
+    public ResponseEntity<String> loginUser(LoginRequestDTO loginDTO) {
+        Authentication authentication;
         try {
             authentication = daoAuthenticationProvider.authenticate(UsernamePasswordAuthenticationToken.unauthenticated(loginDTO.getUsername(), loginDTO.getPassword()));
         } catch (Exception e) {
-            ExceptionDTO exception = new ExceptionDTO();
-            exception.setDescription("403");
-            exception.setDescription("Unauthorized");
-            return new LoginResponseDTO(null, loginDTO.getUsername(), null, exception);
+            return new ResponseEntity<>(new StatusDTO(403, "Unauthorized").toJson(), HttpStatus.UNAUTHORIZED);
         }
-
         CustomUserDetails details = (CustomUserDetails) authentication.getPrincipal();
-        return new LoginResponseDTO(String.valueOf(details.getId()), details.getUsername(), tokenGenerator.createToken(authentication), null);
+        return new ResponseEntity<>(new LoginResponseDTO(String.valueOf(details.getId()), details.getUsername(), tokenGenerator.createToken(authentication)).toJson(), HttpStatus.OK);
     }
 
-    public ResponseEntity<TokenDTO> refreshToken(TokenRefreshDTO tokenDTO) {
+    public ResponseEntity<String> refreshToken(TokenRefreshDTO tokenDTO) {
         Authentication authentication = refreshTokenAuthProvider.authenticate(new BearerTokenAuthenticationToken(tokenDTO.getRefreshToken()));
         Jwt jwt = (Jwt) authentication.getCredentials();
         long id = Long.parseLong((String) jwt.getClaims().get("sub"));
         if (userRepository.existsById(Long.parseLong(tokenDTO.getUserId())) && tokenDTO.getUserId().equals(Long.toString(id)))
-            return ResponseEntity.ok(tokenGenerator.createToken(authentication));
-        return new ResponseEntity<>(new TokenDTO(tokenDTO.getUserId(), null, null, tokenDTO.getRefreshToken()), HttpStatus.NOT_FOUND);
+            return ResponseEntity.ok(tokenGenerator.createToken(authentication).toJson());
+        return new ResponseEntity<>(new StatusDTO(404, "user not found").toJson(), HttpStatus.NOT_FOUND);
     }
 
     @Transactional
-    public DeleteUserDTO deleteUser(User user, Long id) {
-        if (user.getId() != null && user.getId().equals(id)) {
-            userRepository.deleteById(id);
-            return new DeleteUserDTO(true);
+    public ResponseEntity<String> deleteUser(User user, String password) {
+        if (user == null)
+            return new ResponseEntity<>(new StatusDTO(404, "user not found").toJson(), HttpStatus.NOT_FOUND);
+        Optional<User> userRepo = userRepository.findByUsername(user.getUsername());
+        if (userRepo.isPresent()) {
+            User userRepoGet = userRepo.get();
+            if (userRepoGet.getPassword().equals(passwordEncoder.encode(password))) {
+                userRepository.deleteById(userRepoGet.getId());
+                return ResponseEntity.ok(new DeleteResponseDTO(true).toJson());
+            }
         }
-        return new DeleteUserDTO(false);
+        return new ResponseEntity<>(new StatusDTO(401, "unauthorized").toJson(), HttpStatus.UNAUTHORIZED);
     }
 
 
