@@ -5,6 +5,7 @@ import com.cachew.accountmanager.entity.User;
 import com.cachew.accountmanager.service.MainUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,10 +44,15 @@ public class AuthController {
         return mainUserService.refreshToken(tokenDTO);
     }
 
+    @GetMapping("/unauthorized")
+    public ResponseEntity<AuthenticationDTO> getUnauthorized() {
+        return ResponseEntity.ok(new AuthenticationDTO(null, "anonymous", "false"));
+    }
+
     @GetMapping("/token/validate")
     public ResponseEntity<AuthenticationDTO> validateToken(Authentication authentication) {
 
-        if (authentication == null) return  ResponseEntity.ok(new AuthenticationDTO(null, "anonymous", "false"));
+        if (authentication == null) return ResponseEntity.ok(new AuthenticationDTO(null, "anonymous", "false"));
 
         User userDetails = (User) authentication.getPrincipal();
         Long id = userDetails.getId();
