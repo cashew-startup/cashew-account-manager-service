@@ -53,7 +53,7 @@ public class UserManager implements UserDetailsManager {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        MessageFormat.format("username {0} not found", username)
+                        MessageFormat.format("username {} not found", username)
                 ));
     }
 }
