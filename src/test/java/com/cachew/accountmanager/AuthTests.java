@@ -26,7 +26,7 @@
 //
 //    @Test
 //    public void registerTest() throws JsonProcessingException {
-//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
+//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
 //        ResponseEntity<String> result = authController.register(registerRequestDTO);
 //
 //        RegisterResponseDTO dto = mapper.readValue(result.getBody(), RegisterResponseDTO.class);
@@ -39,25 +39,25 @@
 //
 //    @Test
 //    public void loginTest() throws JsonProcessingException {
-//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
+//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
 //        authController.register(registerRequestDTO);
 //
-//        LoginRequestDTO loginDTO = new LoginRequestDTO("user", "user");
+//        LoginRequestDTO loginDTO = new LoginRequestDTO("user23", "user23");
 //        ResponseEntity<String> result = authController.login(loginDTO);
 //
 //        LoginResponseDTO dto = mapper.readValue(result.getBody(), LoginResponseDTO.class);
 //
 //        assertNotNull("dto is null", dto);
-//        assertEquals("username not user", "user", dto.getUsername());
+//        assertEquals("username not user", "user23", dto.getUsername());
 //        assertNotNull("token is not null", dto.getToken());
 //    }
 //
 //    @Test
 //    public void refreshTest() throws JsonProcessingException {
-//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
+//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
 //        authController.register(registerRequestDTO);
 //
-//        LoginRequestDTO loginDTO = new LoginRequestDTO("user", "user");
+//        LoginRequestDTO loginDTO = new LoginRequestDTO("user23", "user23");
 //        ResponseEntity<String> result = authController.login(loginDTO);
 //        LoginResponseDTO loginResponseDTO = mapper.readValue(result.getBody(), LoginResponseDTO.class);
 //
@@ -77,7 +77,7 @@
 //
 //    @Test
 //    public void checkTokenTest() {
-//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
+//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
 //        ResponseEntity<String> register = authController.register(registerRequestDTO);
 //        String token = register.getBody();
 //
