@@ -1,29 +1,29 @@
-//package com.cachew.accountmanager;
-//
-//import com.cachew.accountmanager.dto.*;
-//import com.cachew.accountmanager.web.AuthController;
-//import com.fasterxml.jackson.core.JsonProcessingException;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import lombok.extern.slf4j.Slf4j;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import static org.springframework.test.util.AssertionErrors.*;
-//
-//@Slf4j
-//@SpringBootTest
-//@Transactional
-//public class AuthTests {
-//
-//    @Autowired
-//    private AuthController authController;
-//
-//    @Autowired
-//    private ObjectMapper mapper;
-//
+package com.cachew.accountmanager;
+
+import com.cachew.accountmanager.dto.*;
+import com.cachew.accountmanager.web.AuthController;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.test.util.AssertionErrors.*;
+
+@Slf4j
+@SpringBootTest
+@Transactional
+public class AuthTests {
+
+    @Autowired
+    private AuthController authController;
+
+    @Autowired
+    private ObjectMapper mapper;
+
 //    @Test
 //    public void registerTest() throws JsonProcessingException {
 //        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
@@ -86,11 +86,11 @@
 //        log.info("token: {}", token);
 //
 //    }
-//
-//    @Test
-//    public void mapperDTO() {
-//        StatusDTO status = new StatusDTO(100, "description");
-//        assertEquals("", "{\n  \"code\" : 100,\n  \"description\" : \"description\"\n}", status.toJson());
-//    }
-//
-//}
+
+    @Test
+    public void mapperDTO() {
+        StatusDTO status = new StatusDTO(100, "description");
+        assertEquals("", "{\n  \"code\" : 100,\n  \"description\" : \"description\"\n}", status.toJson());
+    }
+
+}
