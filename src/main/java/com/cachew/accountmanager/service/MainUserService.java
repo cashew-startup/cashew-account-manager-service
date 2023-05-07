@@ -7,8 +7,7 @@ import com.cachew.accountmanager.repository.UserRepository;
 import com.cachew.accountmanager.security.TokenGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -18,6 +17,7 @@ import org.springframework.security.oauth2.server.resource.BearerTokenAuthentica
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -63,7 +63,26 @@ public class MainUserService {
 
         RegisterResponseDTO response = new RegisterResponseDTO(String.valueOf(user.getId()), user.getUsername(), tokenGenerator.createToken(authentication));
 
+        registerInBudgetService(user, response);
+
         return new ResponseEntity<>(response.toJson(), HttpStatus.OK);
+    }
+
+    private void registerInBudgetService(User user, RegisterResponseDTO response) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url = "http://194.35.116.155:8083/api/v1/users";
+        String requestJson = "{\n" +
+                "\t\"username\": \"" + user.getUsername() + "\",\n" +
+                "\t\"email\": \"" + user.getPassword() + "\"\n" +
+                "}";
+        System.out.println(requestJson);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(response.getToken().getAccessToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+        String answer = restTemplate.postForObject(url, entity, String.class);
     }
 
     public ResponseEntity<String> loginUser(LoginRequestDTO loginDTO) {
