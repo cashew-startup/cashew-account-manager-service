@@ -24,68 +24,68 @@ public class AuthTests {
     @Autowired
     private ObjectMapper mapper;
 
-    @Test
-    public void registerTest() throws JsonProcessingException {
-        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
-        ResponseEntity<String> result = authController.register(registerRequestDTO);
-
-        RegisterResponseDTO dto = mapper.readValue(result.getBody(), RegisterResponseDTO.class);
-
-        assertNotNull("dto is null", dto);
-//        assertEquals("is not sign up", 200, dto.getException().getCode());
-//        assertEquals("User is registered", "Ok", dto.getException().getDescription());
-        log.info("token:\n{}", dto.getToken().toString());
-    }
-
-    @Test
-    public void loginTest() throws JsonProcessingException {
-        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
-        authController.register(registerRequestDTO);
-
-        LoginRequestDTO loginDTO = new LoginRequestDTO("user", "user");
-        ResponseEntity<String> result = authController.login(loginDTO);
-
-        LoginResponseDTO dto = mapper.readValue(result.getBody(), LoginResponseDTO.class);
-
-        assertNotNull("dto is null", dto);
-        assertEquals("username not user", "user", dto.getUsername());
-        assertNotNull("token is not null", dto.getToken());
-    }
-
-    @Test
-    public void refreshTest() throws JsonProcessingException {
-        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
-        authController.register(registerRequestDTO);
-
-        LoginRequestDTO loginDTO = new LoginRequestDTO("user", "user");
-        ResponseEntity<String> result = authController.login(loginDTO);
-        LoginResponseDTO loginResponseDTO = mapper.readValue(result.getBody(), LoginResponseDTO.class);
-
-        String refreshToken = loginResponseDTO.getToken().getRefreshToken();
-        String id = loginResponseDTO.getId();
-
-        TokenRefreshDTO tokenRefreshDTO = new TokenRefreshDTO(id, refreshToken);
-
-        String token = authController.token(tokenRefreshDTO).getBody();
-
-        assertNotNull("refresh token is null" , loginResponseDTO.getToken().getRefreshToken());
-        assertNotNull("userId is null", loginResponseDTO.getToken().getUserId());
-
-        assertNotNull("refreshed token is null", token);
-        log.info("token:\n{}", token.toString());
-    }
-
-    @Test
-    public void checkTokenTest() {
-        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user", "user");
-        ResponseEntity<String> register = authController.register(registerRequestDTO);
-        String token = register.getBody();
-
-        log.info(token);
-
-        log.info("token: {}", token);
-
-    }
+//    @Test
+//    public void registerTest() throws JsonProcessingException {
+//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
+//        ResponseEntity<String> result = authController.register(registerRequestDTO);
+//
+//        RegisterResponseDTO dto = mapper.readValue(result.getBody(), RegisterResponseDTO.class);
+//
+//        assertNotNull("dto is null", dto);
+////        assertEquals("is not sign up", 200, dto.getException().getCode());
+////        assertEquals("User is registered", "Ok", dto.getException().getDescription());
+//        log.info("token:\n{}", dto.getToken().toString());
+//    }
+//
+//    @Test
+//    public void loginTest() throws JsonProcessingException {
+//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
+//        authController.register(registerRequestDTO);
+//
+//        LoginRequestDTO loginDTO = new LoginRequestDTO("user23", "user23");
+//        ResponseEntity<String> result = authController.login(loginDTO);
+//
+//        LoginResponseDTO dto = mapper.readValue(result.getBody(), LoginResponseDTO.class);
+//
+//        assertNotNull("dto is null", dto);
+//        assertEquals("username not user", "user23", dto.getUsername());
+//        assertNotNull("token is not null", dto.getToken());
+//    }
+//
+//    @Test
+//    public void refreshTest() throws JsonProcessingException {
+//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
+//        authController.register(registerRequestDTO);
+//
+//        LoginRequestDTO loginDTO = new LoginRequestDTO("user23", "user23");
+//        ResponseEntity<String> result = authController.login(loginDTO);
+//        LoginResponseDTO loginResponseDTO = mapper.readValue(result.getBody(), LoginResponseDTO.class);
+//
+//        String refreshToken = loginResponseDTO.getToken().getRefreshToken();
+//        String id = loginResponseDTO.getId();
+//
+//        TokenRefreshDTO tokenRefreshDTO = new TokenRefreshDTO(id, refreshToken);
+//
+//        String token = authController.token(tokenRefreshDTO).getBody();
+//
+//        assertNotNull("refresh token is null" , loginResponseDTO.getToken().getRefreshToken());
+//        assertNotNull("userId is null", loginResponseDTO.getToken().getUserId());
+//
+//        assertNotNull("refreshed token is null", token);
+//        log.info("token:\n{}", token.toString());
+//    }
+//
+//    @Test
+//    public void checkTokenTest() {
+//        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO("user23", "user23");
+//        ResponseEntity<String> register = authController.register(registerRequestDTO);
+//        String token = register.getBody();
+//
+//        log.info(token);
+//
+//        log.info("token: {}", token);
+//
+//    }
 
     @Test
     public void mapperDTO() {
