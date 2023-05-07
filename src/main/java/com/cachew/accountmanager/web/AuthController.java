@@ -46,13 +46,13 @@ public class AuthController {
 
     @GetMapping("/unauthorized")
     public ResponseEntity<AuthenticationDTO> getUnauthorized() {
-        return ResponseEntity.ok(new AuthenticationDTO(null, "anonymous", "false"));
+        return new ResponseEntity<>(new AuthenticationDTO(null, "anonymous", "false"), HttpStatusCode.valueOf(401));
     }
 
     @GetMapping("/token/validate")
     public ResponseEntity<AuthenticationDTO> validateToken(Authentication authentication) {
 
-        if (authentication == null) return ResponseEntity.ok(new AuthenticationDTO(null, "anonymous", "false"));
+        if (authentication == null) return new ResponseEntity<>(new AuthenticationDTO(null, "anonymous", "false"), HttpStatusCode.valueOf(401));
 
         User userDetails = (User) authentication.getPrincipal();
         Long id = userDetails.getId();
