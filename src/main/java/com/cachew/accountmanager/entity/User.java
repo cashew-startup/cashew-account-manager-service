@@ -16,10 +16,16 @@ import java.util.Collections;
 import static jakarta.persistence.GenerationType.AUTO;
 
 @Data
-@RequiredArgsConstructor
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor(force = true)
 public class User extends CustomUserDetails {
+
+
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 
     @Id
     @GeneratedValue(strategy = AUTO)
@@ -30,6 +36,9 @@ public class User extends CustomUserDetails {
 
     @NonNull
     private String password;
+
+    @NonNull
+    private String email;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

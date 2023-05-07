@@ -25,7 +25,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
-        User user = new User(registerRequestDTO.getUsername(), registerRequestDTO.getPassword());
+        User user = new User(registerRequestDTO.getUsername(), registerRequestDTO.getPassword(), registerRequestDTO.getEmail());
         return mainUserService.createUser(user);
     }
 

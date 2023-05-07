@@ -74,7 +74,7 @@ public class MainUserService {
         String url = "http://194.35.116.155:8083/api/v1/users";
         String requestJson = "{\n" +
                 "\t\"username\": \"" + user.getUsername() + "\",\n" +
-                "\t\"email\": \"" + user.getPassword() + "\"\n" +
+                "\t\"email\": \"" + user.getEmail() + "\"\n" +
                 "}";
         System.out.println(requestJson);
         HttpHeaders headers = new HttpHeaders();
